@@ -1,0 +1,144 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Main Page – Rally Cars RC</title>
+
+  <style>
+    :root{
+      --bg:#ffffff;
+      --text:#111111;
+      --muted:#5f6b7a;
+      --card:#f8f9fb;
+      --border:#d9dde3;
+      --accent:#0a62c1;
+      --radius:12px;
+      --gap:16px;
+      --shadow:0 10px 24px rgba(0,0,0,.08);
+    }
+
+    *{box-sizing:border-box}
+    html,body{
+      margin:0; padding:0;
+      background:var(--bg); color:var(--text);
+      font-family:system-ui,-apple-system,Segoe UI,Roboto,Ubuntu,Cantarell,'Noto Sans',sans-serif;
+      line-height:1.6;
+    }
+
+    a{color:var(--accent); text-decoration:none}
+    a:hover{text-decoration:underline}
+
+    .container{max-width:1200px; margin:0 auto; padding:clamp(16px,4vw,32px)}
+
+    /* Header: centered logo as a linked image */
+    header{
+      display:grid; place-items:center;
+      padding:24px 0 8px;
+    }
+    .logo-link{
+      display:inline-block; border-radius:var(--radius);
+      transition:transform .2s ease, box-shadow .2s ease;
+    }
+    .logo-link:hover{
+      transform:translateY(-2px);
+      box-shadow:var(--shadow);
+    }
+    .logo-link img{
+      display:block;
+      width:clamp(140px,25vw,220px);
+      height:auto;
+    }
+
+    /* Fixed menu (always visible) */
+    .menu{
+      background:var(--card);
+      border:1px solid var(--border);
+      border-radius:var(--radius);
+      box-shadow:var(--shadow);
+      padding:8px;
+      display:flex; flex-wrap:wrap; gap:10px;
+      justify-content:center; align-items:center;
+      margin:16px 0 24px;
+    }
+    .menu a{
+      display:inline-block; padding:10px 14px;
+      border:1px solid var(--border); border-radius:10px;
+      background:#fff; color:var(--text);
+      transition:transform .15s, box-shadow .2s, background .2s;
+      text-decoration:none; white-space:nowrap;
+    }
+    .menu a:hover{
+      background:#f3f5f8; transform:translateY(-1px);
+      box-shadow:0 6px 16px rgba(0,0,0,.08);
+      text-decoration:none;
+    }
+
+    /* Optional intro card (remove if you want only logo + menu + footer) */
+    .card{
+      background:var(--card); border:1px solid var(--border);
+      border-radius:var(--radius); box-shadow:var(--shadow);
+      padding:16px;
+    }
+    .intro{ margin-top:var(--gap); }
+    .intro h1{ margin:0 0 8px; font-size:1.5rem; }
+    .intro p{ margin:0; color:var(--muted); }
+
+    /* Footer: linked social icons */
+    footer{
+      margin-top:32px; padding-top:16px; border-top:1px solid var(--border);
+      display:flex; align-items:center; justify-content:space-between; gap:12px; flex-wrap:wrap
+    }
+    .social{display:flex; align-items:center; gap:10px}
+    .social a{
+      display:inline-flex; align-items:center; justify-content:center;
+      width:28px; height:28px; border-radius:6px; overflow:hidden;
+      border:1px solid var(--border); background:#fff;
+      transition:transform .15s, box-shadow .2s, background .2s
+    }
+    .social a:hover{
+      background:#f3f5f8; transform:translateY(-1px);
+      box-shadow:0 6px 16px rgba(0,0,0,.08)
+    }
+    .social img{width:100%; height:100%; object-fit:cover; display:block}
+  </style>
+</head>
+<body>
+  <div class="container">
+
+    <!-- Header: centered logo as linked picture -->
+    <header aria-label="Site header">
+      <a class="logo-link" href="index.html" aria-label="Go to home">
+        <img src="https://blogger.googleusercontent.com/img/b/R29vZ2xl/AVvXsEgvOQcGLj2SVJhDmPuNjAxR58oMNsQYkdNZrvq_AzuhFDX-yiDRJTovMlOPjOAc_LlRkiAApfTiZdiXo8fTRkOjcSX5959kbjgZfhjduyE2FLLtJwWj9RrRxlQYrRbafKxhyphenhyphenUAew58mqT3s5Vv7-80k7LnfyfDau8R_vEYwMMi0ESuSHZeYuH2Br0XV6Xw/s16000/RallyCarsRClogo.png" alt="Rally Cars RC" />
+      </a>
+    </header>
+
+    <!-- Fixed menu (no roll-in/out) -->
+    <nav class="menu" aria-label="Main navigation">
+      <a href="TamiyaTT02basic.html">Tamiya TT-02 – basic version</a>
+      <a href="tamiya-tt02-advance.html">Tamiya TT-02 – advance version</a>
+    </nav>
+
+    <!-- Optional intro (delete if you want only logo + menu + footer) -->
+    <section class="intro card">
+      <h1>Welcome to Rally Cars RC</h1>
+      <p>Select a product from the menu to view details.</p>
+    </section>
+
+    <!-- Footer: small, linked social icons (same style as product page) -->
+    <footer>
+      <div class="social" aria-label="Social links">
+        <a href="https://www.facebook.com/RallyCarsRC" target="_blank" rel="noopener">
+          <img src="https://blogger.googleusercontent.com/img/b/R29vZ2xl/AVvXsEinLnCetUOy7xDVbZck3lYVTaTq_ik2XU3Mkq-3Ms0lO37DPOfXAa6lGuh-0fUnD_KvVciPLNexw-_gLCm1WVpQ3BN91v238d-11oLOCZS3y23gq9SqeU_E_DJajRlcMR6IIzC9YM3Pq7UWNts12ry3SvVRVp-vVICj1C2zSSQ_1JH2Lw-OJJdlkRskNZM/s1600/facebook.jpg" alt="Facebook" />
+        </a>
+        <a href="https://www.instagram.com/rally_cars_rc/" target="_blank" rel="noopener">
+          <img src="https://blogger.googleusercontent.com/img/b/R29vZ2xl/AVvXsEgJZbiKCiXOqqwI-mWlK2J5DTZ1VUaQQBhm_vAxZNKTEk6OaFhwcy_zxURqc68AFFEeJo2CUivszq7AN2yHDHu79exOM3UExqdGf9_qVZpwHap6EDTT5eSDxsnFzrFdhg5kvjYEprHj3rntsKpK1Rqnv-rP_faeyg9eREPcWIqsaKHcdlJuMy4S73kB6jk/s1600/instagram.jpg" alt="Instagram" />
+        </a>
+      </div>
+      <small style="color:var(--muted)">rallycarsrc[at]gmail.com</small>
+    </footer>
+
+  </div>
+</body>
+</html>
