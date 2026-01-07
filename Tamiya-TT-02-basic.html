@@ -1,0 +1,340 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>RC Rally Kit for Tamiya TT-02 - basic version</title>
+
+  <style>
+    :root{
+      /* Light theme */
+      --bg:#ffffff;
+      --text:#111111;
+      --muted:#5f6b7a;
+      --card:#f8f9fb;
+      --border:#d9dde3;
+      --accent:#ffcc00;    /* links/buttons accent */
+      --accent-2:#000000;  /* secondary accent */
+      --radius:12px;
+      --gap:16px;
+      --shadow:0 10px 24px rgba(0,0,0,.08);
+    }
+
+    *{box-sizing:border-box}
+    html,body{
+      margin:0; padding:0;
+      background:var(--bg); color:var(--text);
+      font-family:system-ui,-apple-system,Segoe UI,Roboto,Ubuntu,Cantarell,'Noto Sans',sans-serif;
+      line-height:1.6;
+    }
+
+    a{color:var(--accent); text-decoration:none}
+    a:hover{text-decoration:underline}
+
+    .container{max-width:1200px; margin:0 auto; padding:clamp(16px,4vw,32px)}
+
+    /* Header: centered logo */
+    header{display:grid; place-items:center; padding:24px 0 8px;}
+    .logo-link{display:inline-block; border-radius:var(--radius); transition:transform .2s ease, box-shadow .2s ease;}
+    .logo-link:hover{transform:translateY(-2px); box-shadow: var(--shadow);}
+    .logo img{display:block; width:clamp(140px,25vw,220px); height:auto;} 
+
+    /* Collapsible menu (roll in/out) */
+    nav{margin:8px 0 24px}
+    details{
+      background:var(--card); border:1px solid var(--border);
+      border-radius:var(--radius); padding:12px 16px; box-shadow:var(--shadow)
+    }
+    summary{cursor:pointer; font-weight:600; list-style:none}
+    summary::marker{display:none}
+    summary::after{content:"▾"; float:right; color:var(--muted); transition:transform .2s}
+    details[open] summary::after{transform:rotate(180deg)}
+    .menu-list{
+      margin:12px 0 0; padding:0; list-style:none;
+      display:grid; gap:8px; grid-template-columns:1fr
+    }
+    .menu-list a{
+      display:block; padding:10px 12px; border:1px solid var(--border);
+      border-radius:10px; background:#fff; color:var(--text);
+      transition:transform .15s, box-shadow .2s, background .2s
+    }
+    .menu-list a:hover{
+      background:#f3f5f8; transform:translateY(-1px);
+      box-shadow:0 6px 16px rgba(0,0,0,.08); text-decoration:none
+    }
+
+    /* Main columns */
+    .main{display:grid; grid-template-columns:1.2fr .8fr; gap:var(--gap)}
+    @media (max-width:900px){ .main{grid-template-columns:1fr} }
+
+    /* Card */
+    .card{
+      background:var(--card); border:1px solid var(--border);
+      border-radius:var(--radius); box-shadow:var(--shadow); padding:16px
+    }
+    .card h2{margin:0 0 12px; font-size:1.25rem}
+
+    /* ====== Gallery (no JS) ======
+       - 6 radio inputs (hidden)
+       - Labels show thumbnails
+       - The :checked input controls which large image is visible in .viewer
+    */
+    .gallery{display:flex; flex-direction:column; gap:12px}
+    /* Hide radios but keep accessible */
+    .gallery input[type="radio"]{
+      position:absolute; opacity:0; pointer-events:none
+    }
+
+    /* Main viewer */
+    .viewer{
+      border:1px solid var(--border); border-radius:10px; overflow:hidden;
+      background:#fff; min-height:320px;
+      display:grid; place-items:center
+    }
+    .viewer img{
+      display:none; width:100%; height:100%; object-fit:cover; background:#f0f2f5
+    }
+
+    /* Default visible image */
+    .viewer img[data-id="1"]{display:block}
+    /* Show matching image when radio checked */
+    #g1:checked ~ .viewer img[data-id="1"]{display:block}
+    #g2:checked ~ .viewer img[data-id="2"]{display:block}
+    #g3:checked ~ .viewer img[data-id="3"]{display:block}
+    #g4:checked ~ .viewer img[data-id="4"]{display:block}
+    #g5:checked ~ .viewer img[data-id="5"]{display:block}
+    #g6:checked ~ .viewer img[data-id="6"]{display:block}
+    /* Hide others */
+    #g1:checked ~ .viewer img:not([data-id="1"]),
+    #g2:checked ~ .viewer img:not([data-id="2"]),
+    #g3:checked ~ .viewer img:not([data-id="3"]),
+    #g4:checked ~ .viewer img:not([data-id="4"]),
+    #g5:checked ~ .viewer img:not([data-id="5"]),
+    #g6:checked ~ .viewer img:not([data-id="6"]){display:none}
+
+    /* Thumbnails */
+    .thumbs{
+      display:grid; gap:10px;
+      grid-template-columns:repeat(6,1fr)
+    }
+    @media (max-width:640px){ .thumbs{grid-template-columns:repeat(3,1fr)} }
+    .thumbs label{
+      border:1px solid var(--border); border-radius:10px; overflow:hidden;
+      background:#fff; cursor:pointer; transition:transform .15s, box-shadow .2s, background .2s
+    }
+    .thumbs label:hover{
+      background:#f3f5f8; transform:translateY(-1px);
+      box-shadow:0 6px 16px rgba(0,0,0,.08)
+    }
+    .thumbs img{display:block; width:100%; height:90px; object-fit:cover; background:#f0f2f5}
+
+    /* Details (price & availability) */
+    .details-list{display:grid; gap:6px; margin:0 0 12px}
+    .details-list .row{
+      display:flex; justify-content:space-between; gap:8px;
+      border-bottom:1px dashed var(--border); padding-bottom:6px
+    }
+    .details-list .label{color:var(--muted)}
+    .details-list .value{font-weight:600}
+
+    /* Groups & buttons */
+    fieldset{
+      border:1px solid var(--border); border-radius:10px;
+      padding:12px; margin:12px 0; background:#fff
+    }
+    legend{padding:0 6px; color:var(--muted); font-weight:600}
+
+    .btns{display:flex; flex-wrap:wrap; gap:10px; margin-top:8px}
+    .btn{
+      display:inline-flex; align-items:center; justify-content:center;
+      padding:10px 14px; border-radius:10px; font-weight:600;
+      border:1px solid var(--border); background:#fff; color:var(--text);
+      transition:transform .15s, box-shadow .2s, background .2s
+    }
+    .btn:hover{
+      background:#f3f5f8; transform:translateY(-1px);
+      box-shadow:0 6px 16px rgba(0,0,0,.08); text-decoration:none
+    }
+    .btn.ebay{color:var(--accent)}
+    .btn.reco{color:var(--accent-2)}
+
+    /* Description */
+    .description{margin-top:20px}
+    .description p{margin:0}
+
+    /* Footer */
+    footer{
+      margin-top:24px; padding-top:16px; border-top:1px solid var(--border);
+      display:flex; align-items:center; justify-content:space-between; gap:12px; flex-wrap:wrap
+    }
+    .social{display:flex; align-items:center; gap:10px}
+    .social a{
+      display:inline-flex; align-items:center; justify-content:center;
+      width:28px; height:28px; border-radius:6px; overflow:hidden;
+      border:1px solid var(--border); background:#fff;
+      transition:transform .15s, box-shadow .2s, background .2s
+    }
+    .social a:hover{
+      background:#f3f5f8; transform:translateY(-1px);
+      box-shadow:0 6px 16px rgba(0,0,0,.08)
+    }
+    .social img{width:100%; height:100%; object-fit:cover; display:block}
+  </style>
+</head>
+<body>
+  <div class="container">
+
+    <!-- Header: centered logo with link to main page -->
+    <header>
+      <a class="logo" href="index.html" aria-label="Go to main page">
+        <img src="https://blogger.googleusercontent.com/img/b/R29vZ2xl/AVvXsEgvOQcGLj2SVJhDmPuNjAxR58oMNsQYkdNZrvq_AzuhFDX-yiDRJTovMlOPjOAc_LlRkiAApfTiZdiXo8fTRkOjcSX5959kbjgZfhjduyE2FLLtJwWj9RrRxlQYrRbafKxhyphenhyphenUAew58mqT3s5Vv7-80k7LnfyfDau8R_vEYwMMi0ESuSHZeYuH2Br0XV6Xw/s16000/RallyCarsRClogo.png" alt="Company Logo">
+      </a>
+    </header>
+
+    <!-- Roll in/out menu -->
+    <nav>
+      <details>
+        <summary>Products</summary>
+        <ul class="menu-list">
+          <li><a href="https://example.com/tamiya-tt-02-advance">Tamiya TT-02 – advance version</a></li>
+        </ul>
+      </details>
+    </nav>
+
+    <!-- Main content: left gallery, right details -->
+    <main class="main">
+
+      <!-- Left: gallery with main image + selectable thumbnails -->
+      <section class="card gallery" aria-label="Product photo gallery">
+        <h2>RC Rally Kit for Tamiya TT-02 - basic version</h2>
+
+        <!-- Radios control which image is displayed -->
+        <input type="radio" name="g" id="g1" checked aria-hidden="true">
+        <input type="radio" name="g" id="g2" aria-hidden="true">
+        <input type="radio" name="g" id="g3" aria-hidden="true">
+        <input type="radio" name="g" id="g4" aria-hidden="true">
+        <input type="radio" name="g" id="g5" aria-hidden="true">
+        <input type="radio" name="g" id="g6" aria-hidden="true">
+
+        <!-- Main viewer (shows selected image) -->
+        <div class="viewer">
+          <img src="https://blogger.googleusercontent.com/img/b/R29vZ2xl/AVvXsEiCt5HhK8fjsCJ5Z1-w98vJsZ2zjCiiqo5MavF3DsBO0-NXv2UJef5SGaSxji3sJnPyqfr4aHE9jHl1djGbNn0KeVVX4TN_y0SWjFYWug4Y1scpyV0kTy6PO_rRah8M2h-JjxD5YvCukhIwe2N9GIfke9tH1_89lp4cMTPUtQ9j_ZSTp0IhjMwGeCy4Gik/s16000/Main.jpg" alt="Product photo 1" data-id="1">
+          <img src="https://blogger.googleusercontent.com/img/b/R29vZ2xl/AVvXsEh9qadB2BxZhoMcwk-pjgq-ahp0_L_pdIz1u42bdfWsu84NGabflAHGOj2BeHuEFpRE9y1FoSVuD60vzGaUQLyvGbag-ns88-8RH-0GlrHzfEy8CPGB6sk6GH0gxQ9hgalY0IaZ5q8EGScA1QVAPPOVlH0yRap1ZoyqElXk_HZYZEMdz2QJn9rLEr6TR6A/s16000/Main%201.jpg" alt="Product photo 2" data-id="2">
+          <img src="https://blogger.googleusercontent.com/img/b/R29vZ2xl/AVvXsEgXxvHQ2QrME8e5ryGgvCHqL_eF6L3KXJ_R_vkVgzatTJ7zwpnGDyLz0hai8v-T7U-lPPQksMjE-awJa1TuP3C7YYWRaL66g-jzAVKwOt16ATIsWgkrFeiVum5PWGO5eFFEqMLR18nC3hqy6YV7A8MbzG8x4s9dCmhCA0ZGKdvZ9EDWuQ_25HeKg3Osp40/s16000/Main%202.jpg" alt="Product photo 3" data-id="3">
+          <img src="https://blogger.googleusercontent.com/img/b/R29vZ2xl/AVvXsEgtopmGb_zZPrtIMixNjYlndTvJ3Ca_8G_JUtH000WzyGhAT9WUqaJkuI4qXqDQ6KTY3NtPhNjm_9VkYKPlSEKjgy7rl711DeBTZcFrNWI9pKZ2hNQs7IOhE8OAwJVG2cvw7w5J-Zj2FZ4RLsELvA9k6d-YId3UCLzudBl0NxVmK_k7gl99dY0cCMviEQY/s16000/Main%203.jpg" alt="Product photo 4" data-id="4">
+          <img src="https://blogger.googleusercontent.com/img/b/R29vZ2xl/AVvXsEhkrT4OYyewIca2jnjgVbWyngVKgE15GbzQwV3Abmy16qxSFr3RLG0zTxWJ0Zd_0631tVbCpc0BLy1zJqYINo6hoO2q8r61oejRxc0JWjM-zFIkujL-tuskyeru3hcVJe4u-fNqyjvvlFQlQDnrIkG1rTluAr957qIORtWgSdMigPxrVmRo7BkA1Y4sLaM/s16000/Main%205.jpg" alt="Product photo 5" data-id="5">
+          <img src="https://blogger.googleusercontent.com/img/b/R29vZ2xl/AVvXsEgPyEglIrdpneYbA1Bn2xugqf2FLlbHJthakbGq2b0hha-S1NjDT4uS5fr31rBsbTa6MZcRCwqsoqnkb51FqRg2Ru4TIIQWUKQyWBBtcSeC9bZAZ8WGhiefjSsrWlCReekpnlHbPuFt0bgY0peebYxwtt9GMxaePNeqvfn74d62mqpj9eMwrazkyPsGWkU/s16000/Main%206.jpg" alt="Product photo 6" data-id="6">
+        </div>
+
+        <!-- Thumbnails (click to make selected image the main one) -->
+        <div class="thumbs" aria-label="Select photo">
+          <label for="g1"><img src="https://blogger.googleusercontent.com/img/b/R29vZ2xl/AVvXsEhqlOuM6ChgAcnuHWXF-LiKnxMZZT9-e58Mhn3It44oIb_x9cJyQ6ZvWGzoh0fRY65GmSFRHR3Ra2nNNS2t-xEnJxwNNtR0T6KFCmh2hY8b-cZSlGCVp2hCGh-t3j8jIIdgYOCRol_akfUT0gdgDljntYONJbXF_3SwgkM1HwbNXZtQfgJN-fmeW5dbOPQ/s1600/Thumbnail.jpg" alt="Thumbnail 1"></label>
+          <label for="g2"><img src="https://blogger.googleusercontent.com/img/b/R29vZ2xl/AVvXsEjNIzyupOrzzIwAQ7Huzs7MNPiIpOGrBc1Ay0Xn0iAYPVd1ZG4JSHJh6LKomqdEjZZj0yaU8cskz1-czLn4Q7rsBu63tKzQyl5b_MQ6_7OYB9uwX-1Rgb1I7ldJG_qaYO4lFTw_Jn7YWWpktvdlcycLZ74nUL9wV4bO4cKGFU5OkgOfNdRkrtKbotDOFkc/s1600/Thumbnail%201.jpg" alt="Thumbnail 2"></label>
+          <label for="g3"><img src="https://blogger.googleusercontent.com/img/b/R29vZ2xl/AVvXsEjYoVzNulub9vsPmbWNAr-S2TDc07IOMxKwqlMFKdI4l-NJrXxCZ8IkAsBOUe4cAh8NcfABRHJJU546TQvTVGCMetRyMKl78IKBbeI094zQxIxNACKQog_NiuCdGk1pT1v5QnUVO5eAwivgDEJ4FjHIUy-7pRjQ17FRwSt7gj2233Id9GLTl4dl6T3h0v4/s1600/Thumbnail%202.jpg" alt="Thumbnail 3"></label>
+          <label for="g4"><img src="https://blogger.googleusercontent.com/img/b/R29vZ2xl/AVvXsEjFtd0KTDujXv81GNsCcIuky0eSiIA09AyV5H7IZoXeqiRwWD2BoyeivJR-pD0F9yA-DcdNVn-DxiJ2gde0DIDHbHYR9Y8TOA2S2MkWjqiNu1FIFy50Oz29Vqr7VxT4JflQh4Jxo-AYVwnPvWJ0OwgRS2n6TtkQV5a8fRBwk4WmJr_dfGVO44i4jwGYGZM/s1600/Thumbnail%203.jpg" alt="Thumbnail 4"></label>
+          <label for="g5"><img src="https://blogger.googleusercontent.com/img/b/R29vZ2xl/AVvXsEi_1Lm838Miac9r7Yaj_mbAkIaxvC4arzYbnSrjYfP-mWg2iXeDUKOU5O2gbUe4bCrfdVS__yKoIqzULc0FBj3m85ai_t8UJtQB-j6zjjP1iKaFELIixF_ob9WSxVys1-VLsuFCg6GxgPNgrwFnq_v9B87DaWPZXuCzo0Zw76Vxb0sZPRaFf_FlOmf0_HU/s16000/Thumbnail%205.jpg" alt="Thumbnail 5"></label>
+          <label for="g6"><img src="https://blogger.googleusercontent.com/img/b/R29vZ2xl/AVvXsEg5G22e-KjPhiaihy-sZAfLwnABo57lXowWm80LeaCLHTof3X9XT8TCy5DVDKlOVYF1fDp1mAUK_STx_SOM5xNWOUipjcAt4bg3m5BZSBOJmYxhfr5cMwLFTo4yap7zxmhj_TdelfmT9cYM6IpqESTE0WvcKkIs58Wr9Yqy8LMOpPhzYLg-I0Rshyphenhyphenh0yKA/s16000/Thumbnail%206.jpg" alt="Thumbnail 6"></label>
+        </div>
+
+        <div class="description card" style="margin-top:16px;">
+          <h2>Description</h2>
+          
+    <p>
+        This Rally Kit is designed to improve the steering system of the Tamiya TT‑02 so it can compete on small special stages. It significantly reduces 	the turning radius without excessive grinding or removing parts of the chassis. The top‑mounted servo position makes the steering more direct and 	smoother while allowing steering geometry modifications. This kit also 	eliminates the stock plastic steering system that can easily get blocked 	by stones and dirt.
+    </p>
+	<h3>Basic Version</h3>
+    <p>
+	The basic version is perfect for anyone who has already started modifying their TT‑02 or wants to assemble the car themselves.
+        If you want more performance – check the advanced version.
+    </p>
+
+    <h3>Basic Version Requires:</h3>
+    <ul>
+        <li>Servo saver – TAMIYA 51000, 50473, 54893, XRAY 372503, and similar (hole spacing 9 – 11 mm)</li>
+        <li>Aluminum or steel CVDs (2 pcs for front axle) – included in advanced version</li>
+        <li>Turnbuckles (2 pcs connecting servo with front uprights)* – included in advanced version</li>
+    </ul>
+    <p class="note">
+        * compatible 30–32 mm turnbuckles with suitable ball ends can be used
+    </p>
+
+    <h3>Basic Version Includes:</h3>
+    <ul>
+        <li>Aluminum top deck</li>
+        <li>Aluminum servo horn (hole spacing 9 – 10 mm)</li>
+        <li>Aluminum steering‑knuckle extension – 3 sets (different lengths for steering angle adjustment)</li>
+        <li>3D‑printed bushings for steering arm to knuckle connection – 3 sets (depending on shock size)</li>
+        <li>3D‑printed battery holder preventing contact with steering system</li>
+        <li>3D‑printed top‑deck bushing for SRX model</li>
+        <li>Hardware: all needed screws, pads, nuts (20 pcs assorted M3 stainless hardware)</li>
+        <li>Clear assembly instructions and Rally Cars RC stickers</li>
+    </ul>
+
+    <h2>Materials</h2>
+    <p>
+        Aluminum parts are machined from 2 mm 5000‑series aluminum. 3D‑printed parts are produced from PETG – waterproof and easy to clean.
+    </p>        </div>
+      </section>
+
+      <!-- Right: details and grouped buttons -->
+      <aside class="card">
+        <h2>Details</h2>
+
+        <!-- Price & availability -->
+        <div class="details-list">
+          <div class="row">
+            <span class="label">Price</span>
+            <span class="value">PLN 66.00</span>
+          </div>
+          <div class="row">
+            <span class="label">Availability</span>
+            <span class="value">In Stock</span>
+          </div>
+        </div>
+
+        <!-- Group 1: Rally Cars RC product -->
+        <fieldset>
+          <legend>Rally Cars RC product</legend>
+          <div class="btns">
+            <a class="btn ebay" href="https://www.ebay.pl/itm/396692536018" target="_blank" rel="noopener">Buy on Ebay</a>
+          </div>
+        </fieldset>
+
+        <!-- Group 2: Complementary products -->
+        <fieldset>
+          <legend>Complementary products</legend>
+          <div class="btns">
+            <a class="btn reco" href="https://s.click.aliexpress.com/e/_c4tUkYcx" target="_blank" rel="noopener">Servo</a>
+            <a class="btn reco" href="https://s.click.aliexpress.com/e/_c3KyzkCx" target="_blank" rel="noopener">Servo saver</a>
+	    <a class="btn reco" href="https://s.click.aliexpress.com/e/_c4nQSYEJ" target="_blank" rel="noopener">Bearing kit</a>
+            <a class="btn reco" href="https://s.click.aliexpress.com/e/_c3vFt8oT"_blank" rel="noopener">Steel CVD</a>
+	    <a class="btn reco" href="https://s.click.aliexpress.com/e/_c3Ete8wR" rel="noopener">M3 Ball Joint Link B Version</a>
+	    <a class="btn reco" href="https://s.click.aliexpress.com/e/_c31Rcs4j" rel="noopener">M3 Turnbuckle 30mm</a>
+
+          </div>
+        </fieldset>
+ 	<fieldset>
+  	<legend>Affiliate Disclosure</legend>
+  	<p>
+   	The links included in the complementary products section are affiliate links. Clicking them doesn't cost you anything, but they can help us. If 	you decide to purchase a product, we'll earn a small commission. We've only included products we've used and found useful. If they were helpful 	to us, they might be helpful to you too.
+  	</p>
+	</div>
+	</fieldset>
+
+      </aside>
+    </main>
+
+    <footer>
+      <div class="social" aria-label="Social links">
+        <a href="https://www.facebook.com/RallyCarsRC" aria-label="Facebook" target="_blank" rel="noopener">
+          <img src="https://blogger.googleusercontent.com/img/b/R29vZ2xl/AVvXsEinLnCetUOy7xDVbZck3lYVTaTq_ik2XU3Mkq-3Ms0lO37DPOfXAa6lGuh-0fUnD_KvVciPLNexw-_gLCm1WVpQ3BN91v238d-11oLOCZS3y23gq9SqeU_E_DJajRlcMR6IIzC9YM3Pq7UWNts12ry3SvVRVp-vVICj1C2zSSQ_1JH2Lw-OJJdlkRskNZM/s1600/facebook.jpg" alt="Facebook icon">
+        </a>
+        <a href="https://www.instagram.com/rally_cars_rc/" aria-label="Instagram" target="_blank" rel="noopener">
+          <img src="https://blogger.googleusercontent.com/img/b/R29vZ2xl/AVvXsEgJZbiKCiXOqqwI-mWlK2J5DTZ1VUaQQBhm_vAxZNKTEk6OaFhwcy_zxURqc68AFFEeJo2CUivszq7AN2yHDHu79exOM3UExqdGf9_qVZpwHap6EDTT5eSDxsnFzrFdhg5kvjYEprHj3rntsKpK1Rqnv-rP_faeyg9eREPcWIqsaKHcdlJuMy4S73kB6jk/s1600/instagram.jpg" alt="Instagram icon">
+        </a>
+      </div>
+      <small style="color:var(--muted)">rallycarsrc[at]gmail.com</small>
+    </footer>
+  </div>
+</body>
+</html>
